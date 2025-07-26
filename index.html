@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CHUJ.PL</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      font-family: 'Montserrat', monospace;
+      cursor: url('kursor.png'), auto;
+    }
+
+    #intro {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: black url('3dgifmaker05433.gif') center center no-repeat;
+      background-size: contain;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    #intro-text {
+      color: white;
+      font-size: 1.5em;
+      margin-top: 20px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    #main {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    video#bgvid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    nav {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      z-index: 2;
+    }
+
+    nav button {
+      color: white;
+      margin: 0 15px;
+      background: none;
+      border: none;
+      font-weight: bold;
+      font-family: 'Montserrat', monospace;
+      font-size: 1em;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    #logo {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    #logo img {
+      max-width: 300px;
+      cursor: url('kursor.png'), auto;
+    }
+
+    .button-container {
+      position: absolute;
+      top: 65%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 2;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: 2px solid white;
+      background: black;
+      color: white;
+      font-family: 'Montserrat', monospace;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: white;
+      color: black;
+    }
+
+    .dollar {
+      position: absolute;
+      top: -20px;
+      color: white;
+      font-size: 1.2em;
+      font-weight: bold;
+      animation: float 10s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(110vh); opacity: 0; }
+    }
+
+    .volume-control {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 8px 12px;
+      border: 1px solid white;
+      border-radius: 10px;
+    }
+
+    .volume-control input[type="range"] {
+      width: 150px;
+      appearance: none;
+      background: white;
+      height: 5px;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .volume-control input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      border: 1px solid white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 5;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: black;
+      border: 2px solid white;
+      padding: 20px;
+      max-width: 90vw;
+      max-height: 80vh;
+      width: 100%;
+      overflow-y: auto;
+      border-radius: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .squad-card {
+      background: black;
+      border: 1px solid white;
+      padding: 10px;
+      text-align: center;
+      width: 150px;
+      flex: 0 1 150px;
+    }
+
+    .squad-card h3 {
+      color: rgb(255, 255, 255);
+      margin: 0 0 10px 0;
+      font-size: 1.2em;
+    }
+
+    .squad-card a {
+      display: inline-block;
+      padding: 5px 10px;
+      border: 1px solid white;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9em;
+      transition: 0.3s;
+    }
+
+    .squad-card a:hover {
+      background: white;
+      color: black;
+    }
+
+    .squad-card p {
+      color: white;
+      font-size: 0.85em;
+      margin-top: 8px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .star {
+      position: absolute;
+      color: white;
+      font-size: 1.5em;
+      animation: floatStar 3s linear forwards;
+      pointer-events: none;
+      user-select: none;
+      z-index: 999;
+    }
+
+    @keyframes floatStar {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    .wallpaper-list a {
+      display: block;
+      color: white;
+      font-size: 1.2em;
+      margin: 10px 0;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .wallpaper-list a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="intro" onclick="startSite()">
+    <div id="intro-text">[ click anywhere to enter... ]</div>
+  </div>
+
+  <div id="main">
+    <video id="bgvid" autoplay loop playsinline muted>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <audio id="music" autoplay loop>
+      <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <nav>
+      <button onclick="showClowns()">[ Hall of Clowns ]</button>
+    </nav>
+
+    <div id="logo">
+      <img src="logo.gif" alt="Chuj Logo" onclick="spawnStar()">
+    </div>
+
+    <div class="button-container">
+      <button class="btn" onclick="showChujSquad()">ChujUsers</button>
+      <button class="btn" onclick="window.open('https://discord.gg/2gGECRkdGH', '_blank')">Discord Server</button>
+    </div>
+
+    <div class="volume-control">
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" />
+    </div>
+
+    <div id="ChujSquadModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="hideChujSquad()">&times;</span>
+        <div class="squad-card"><h3>loneyy</h3><a href="https://steamcommunity.com/id/18nv" target="_blank">Steam</a></div>
+        <div class="squad-card"><h3>sxwh</h3><a href="https://steamcommunity.com/id/sxwh" target="_blank">Steam</a></div>
+        <div class="squad-card"><h3>f1lns</h3><a href="https://steamcommunity.com/id/f1lns" target="_blank">Steam</a></div>
+      </div>
+    </div>
+
+    <div id="hallOfClownsModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="hideClowns()">&times;</span>
+        <div class="squad-card">
+          <h3>darksuu</h3>
+          <a href="https://steamcommunity.com/profiles/76561199863597172" target="_blank">alt</a>
+          <a href="https://steamcommunity.com/profiles/76561199832084928" target="_blank">main</a>
+          <p>cwel waldkowicz co chcial na vc a sie bal pozniej (main tak samo gowniany jak alt)</p>
+        </div>
+      </div>
+    </div>
+
+  <script>
+    function startSite() {
+      document.getElementById('intro').style.display = 'none';
+      const main = document.getElementById('main');
+      main.style.visibility = 'visible';
+      main.style.opacity = '1';
+
+      const video = document.getElementById('bgvid');
+      const music = document.getElementById('music');
+      const volumeSlider = document.getElementById('volumeSlider');
+
+      music.volume = volumeSlider.value;
+      video.play().catch(e => console.warn('Video play failed:', e));
+      music.play().catch(e => console.warn('Music play failed:', e));
+
+      volumeSlider.addEventListener('input', () => {
+        music.volume = volumeSlider.value;
+      });
+
+      setInterval(() => {
+        const dollar = document.createElement('div');
+        dollar.classList.add('dollar');
+        dollar.textContent = 'Ɑ͞ ̶͞ ̶͞ لں͞';
+        dollar.style.left = Math.random() * 100 + 'vw';
+        dollar.style.fontSize = (Math.random() * 1 + 0.6) + 'em';
+        dollar.style.animationDuration = (6 + Math.random() * 4) + 's';
+        document.body.appendChild(dollar);
+        setTimeout(() => dollar.remove(), 10000);
+      }, 300);
+    }
+
+    function showChujSquad() {
+      document.getElementById('ChujSquadModal').style.display = 'flex';
+    }
+
+    function hideChujSquad() {
+      document.getElementById('ChujSquadModal').style.display = 'none';
+    }
+
+    function showClowns() {
+      document.getElementById('hallOfClownsModal').style.display = 'flex';
+    }
+
+    function hideClowns() {
+      document.getElementById('hallOfClownsModal').style.display = 'none';
+    }
+
+    function showWallpaperModal() {
+      document.getElementById('wallpaperModal').style.display = 'flex';
+    }
+
+    function hideWallpaperModal() {
+      document.getElementById('wallpaperModal').style.display = 'none';
+    }
+
+    function spawnStar() {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.textContent = 'Ɑ͞ ̶͞ ̶͞ ̶͞ لں͞';
+      const x = window.innerWidth / 2 + (Math.random() * 100 - 50);
+      const y = window.innerHeight / 2 + (Math.random() * 100 - 50);
+      star.style.left = x + 'px';
+      star.style.top = y + 'px';
+      star.style.fontSize = (Math.random() * 2 + 1) + 'em';
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
